@@ -1,0 +1,171 @@
+https://fastapi.tiangolo.com/tutorial/sql-databases/
+sqlalchemy : ORM python module when we dont want to deal with postgres/sql complexity/queries
+It abstracts all the sql away from you and we can use simple python to interact
+with our database.
+
+FastAPI works with any database and any style of library to talk to the database.
+
+A common pattern is to use an "ORM": an "object-relational mapping" library.
+
+An ORM has tools to convert ("map") between objects in code and database tables ("relations").
+
+With an ORM, you normally create a class that represents a table in a SQL database, each attribute of the class represents a column, with a name and a type.
+
+For example a class Pet could represent a SQL table pets.
+
+And each instance object of that class represents a row in the database.
+
+For example an object orion_cat (an instance of Pet) could have an attribute orion_cat.type, for the column type. And the value of that attribute could be, e.g. "cat".
+
+These ORMs also have tools to make the connections or relations between tables or entities.
+
+This way, you could also have an attribute orion_cat.owner and the owner would contain the data for this pet's owner, taken from the table owners.
+
+So, orion_cat.owner.name could be the name (from the name column in the owners table) of this pet's owner.
+
+It could have a value like "Arquilian".
+
+And the ORM will do all the work to get the information from the corresponding table owners when you try to access it from your pet object.
+
+Common ORMs are for example: Django-ORM (part of the Django framework), SQLAlchemy ORM (part of SQLAlchemy, independent of framework) and Peewee (independent of framework), among others.
+
+###############################################################################
+psycopg2 : Documentation
+https://www.psycopg.org/docs/usage.html
+
+import psycopg2
+
+# Connect to an existing database
+>>> conn = psycopg2.connect("dbname=test user=postgres")
+
+# Open a cursor to perform database operations
+>>> cur = conn.cursor()
+
+# Execute a command: this creates a new table
+>>> cur.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
+
+# Pass data to fill a query placeholders and let Psycopg perform
+# the correct conversion (no more SQL injections!)
+>>> cur.execute("INSERT INTO test (num, data) VALUES (%s, %s)",
+...      (100, "abc'def"))
+
+# Query the database and obtain data as Python objects
+>>> cur.execute("SELECT * FROM test;")
+>>> cur.fetchone()
+(1, 100, "abc'def")
+
+# Make the changes to the database persistent
+>>> conn.commit()
+
+# Close communication with the database
+>>> cur.close()
+>>> conn.close()
+
+##################################################################################
+postgresSQL :
+Install postgres in Windows and then via postgres CLI, run following command to create your database unless you want to use GUI (pgadmin application)
+CREATE DATABASE fastapi
+    WITH 
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    CONNECTION LIMIT = -1;
+
+Creating a schema in postgres:
+CREATE SCHEMA kapil
+    AUTHORIZATION postgres;
+
+
+
+Select from table:
+SELECT * FROM products WHERE inventory > 500;
+SELECT * FROM products WHERE inventory > 500 AND price > 200;
+SELECT * FROM products WHERE price != 360 OR inventory = 0;
+SELECT * FROM products LIMIT 4;
+SELECT * FROM products LIMIT 4 OFFSET 2;
+SELECT * FROM products WHERE inventory >= 80;
+SELECT * FROM products WHERE inventory >= 80 OR price > 50;
+SELECT * FROM products ORDER BY id DESC;
+SELECT * FROM products ORDER BY id ASC;
+SELECT * FROM products ORDER BY id LIMIT 7;
+SELECT * FROM products ORDER BY inventory DESC, price ASC;
+SELECT * FROM products WHERE id = 1 OR id = 5 OR id = 7;
+SELECT * FROM products WHERE id IN (1,5,4);
+SELECT * FROM products WHERE name LIKE '%VD%';
+SELECT * FROM products WHERE name NOT LIKE '%TV%';
+SELECT * FROM products WHERE name LIKE 'mic%';
+SELECT * FROM products WHERE name LIKE '%e';
+SELECT * FROM products WHERE name NOT LIKE '%r';
+SELECT * FROM products WHERE name LIKE '%re%';
+SELECT * FROM products ORDER BY created_at DESC;
+
+
+Insert into table: 
+INSERT INTO products (name, price, inventory) VALUES ('chapati', 3, 988);
+INSERT INTO products (name, price, inventory) VALUES ('samosa', 2, 1988) returning name,price,inventory;
+INSERT INTO products (name, price, inventory) VALUES ('samosa', 2, 1988) returning *;
+INSERT INTO products (name, price, inventory) VALUES ('samosa', 2, 1988), ('Jalebi', 6, 1231)  returning *;
+
+
+Delete from table:
+DELETE FROM products WHERE id = 10;
+DELETE FROM products WHERE id = 11 returning *;
+DELETE FROM products WHERE id = 11 returning name,price,id;
+DELETE FROM products WHERE inventory = 0;
+
+
+Update table:
+UPDATE products SET name = 'LED TV', price = 176 WHERE id = 1;
+UPDATE products SET name = 'Paneer Samosa', price = 12 WHERE id = 15 returning *;
+UPDATE products SET name = 'LED TV', price = 176 WHERE id = 1 returning name,price,id;;
+UPDATE products SET is_sale = true WHERE id > 7 RETURNING *;
+
+
+
+
+
+serial is datatype in postgres which is used to increment 
+automatically. 
+
+capatalization does not impact postgres queries.
+
+
+
+
+######################################################################################
+
+
+FastAPI documentation: 
+https://fastapi.tiangolo.com/tutorial/
+
+
+To create virtual environment for python
+py -3 -m venv venvk
+
+
+To instal FastAPI:
+pip install "fastapi[all]"
+
+You can also install it part by part.
+This is what you would probably do once you want to deploy your application to production:
+
+pip install fastapi
+Also install uvicorn to work as the server:
+
+pip install "uvicorn[standard]"
+And the same for each of the optional dependencies that you want to use.
+
+
+
+To activate virtual environment: 
+.\venvk\Scripts\activate.bat     
+Or
+.\venvk\Scripts\Activate.ps1
+
+
+To start webserver:
+uvicorn main:app
+or
+uvicorn myapp.main:app
+or
+uvicorn main:app --reload
+
